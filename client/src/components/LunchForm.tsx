@@ -21,6 +21,10 @@ const EMPTY_FORM: FormState = {
   nutFree: false,
 }
 
+const MAX_NAME_LENGTH = 60
+const MAX_NOTES_LENGTH = 300
+const MAX_PREP_TIME_MINUTES = 240
+
 export default function LunchForm() {
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [ideas, setIdeas] = useState<SavedLunchIdea[]>([])
@@ -44,10 +48,30 @@ export default function LunchForm() {
 
   function validate(): boolean {
     const newErrors: Partial<Record<keyof FormState, string>> = {}
-    if (!form.name.trim()) newErrors.name = 'Name is required'
-    if (!form.notes.trim()) newErrors.notes = 'Notes are required'
-    if (!form.prepTimeMinutes || Number(form.prepTimeMinutes) <= 0)
+
+    const trimmedName = form.name.trim()
+    if (!trimmedName) {
+      newErrors.name = 'Name is required'
+    } else if (trimmedName.length > MAX_NAME_LENGTH) {
+      newErrors.name = `Name must be ${MAX_NAME_LENGTH} characters or fewer`
+    }
+
+    const trimmedNotes = form.notes.trim()
+    if (!trimmedNotes) {
+      newErrors.notes = 'Notes are required'
+    } else if (trimmedNotes.length > MAX_NOTES_LENGTH) {
+      newErrors.notes = `Notes must be ${MAX_NOTES_LENGTH} characters or fewer`
+    }
+
+    const prepTime = Number(form.prepTimeMinutes)
+    if (!form.prepTimeMinutes.trim() || Number.isNaN(prepTime)) {
       newErrors.prepTimeMinutes = 'Enter a valid prep time (mins)'
+    } else if (!Number.isInteger(prepTime) || prepTime <= 0) {
+      newErrors.prepTimeMinutes = 'Prep time must be a whole number greater than 0'
+    } else if (prepTime > MAX_PREP_TIME_MINUTES) {
+      newErrors.prepTimeMinutes = `Prep time must be ${MAX_PREP_TIME_MINUTES} minutes or fewer`
+    }
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -94,6 +118,7 @@ export default function LunchForm() {
           <input
             id="name"
             type="text"
+            maxLength={MAX_NAME_LENGTH}
             className={`lf-input${errors.name ? ' lf-input--error' : ''}`}
             placeholder="e.g. PB&J Sandwich"
             value={form.name}
@@ -132,6 +157,7 @@ export default function LunchForm() {
             id="prepTime"
             type="number"
             min={1}
+            max={MAX_PREP_TIME_MINUTES}
             className={`lf-input lf-input--short${errors.prepTimeMinutes ? ' lf-input--error' : ''}`}
             placeholder="e.g. 10"
             value={form.prepTimeMinutes}
@@ -161,6 +187,7 @@ export default function LunchForm() {
           </label>
           <textarea
             id="notes"
+            maxLength={MAX_NOTES_LENGTH}
             className={`lf-textarea${errors.notes ? ' lf-input--error' : ''}`}
             placeholder="e.g. Cut into triangles, serve with dipping sauce…"
             rows={3}

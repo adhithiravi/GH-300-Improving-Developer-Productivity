@@ -23,6 +23,10 @@ type ValidationErrors = Partial<Record<keyof Omit<LunchIdea, 'id'>, string>>
 
 const VALID_CATEGORIES: LunchCategory[] = ['main', 'snack', 'fruit', 'drink', 'treat']
 
+const MAX_NAME_LENGTH = 60
+const MAX_NOTES_LENGTH = 300
+const MAX_PREP_TIME_MINUTES = 240
+
 const lunchIdeas: LunchIdea[] = []
 let nextId = 1
 
@@ -41,6 +45,8 @@ function validateLunchInput(input: CreateLunchIdeaInput): {
   const name = typeof input.name === 'string' ? input.name.trim() : ''
   if (!name) {
     errors.name = 'name is required'
+  } else if (name.length > MAX_NAME_LENGTH) {
+    errors.name = `name must be ${MAX_NAME_LENGTH} characters or fewer`
   }
 
   if (!isLunchCategory(input.category)) {
@@ -52,6 +58,8 @@ function validateLunchInput(input: CreateLunchIdeaInput): {
   const notes = typeof input.notes === 'string' ? input.notes.trim() : ''
   if (!notes) {
     errors.notes = 'notes is required'
+  } else if (notes.length > MAX_NOTES_LENGTH) {
+    errors.notes = `notes must be ${MAX_NOTES_LENGTH} characters or fewer`
   }
 
   if (typeof input.nutFree !== 'boolean') {
@@ -62,8 +70,10 @@ function validateLunchInput(input: CreateLunchIdeaInput): {
 
   const prepTimeMinutes =
     typeof input.prepTimeMinutes === 'number' ? input.prepTimeMinutes : Number.NaN
-  if (!Number.isFinite(prepTimeMinutes) || prepTimeMinutes <= 0) {
-    errors.prepTimeMinutes = 'prepTimeMinutes must be a number greater than 0'
+  if (!Number.isFinite(prepTimeMinutes) || !Number.isInteger(prepTimeMinutes) || prepTimeMinutes <= 0) {
+    errors.prepTimeMinutes = 'prepTimeMinutes must be a whole number greater than 0'
+  } else if (prepTimeMinutes > MAX_PREP_TIME_MINUTES) {
+    errors.prepTimeMinutes = `prepTimeMinutes must be ${MAX_PREP_TIME_MINUTES} or fewer`
   }
 
   if (Object.keys(errors).length > 0) {
