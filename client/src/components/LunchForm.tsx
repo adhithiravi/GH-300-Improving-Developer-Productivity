@@ -1,6 +1,11 @@
 import { useEffect, useState, FormEvent } from 'react'
 import { LunchIdea, LunchCategory, SavedLunchIdea } from '../types'
-import { createLunchIdea, getLunchIdeas } from '../services/lunchApi'
+import {
+  createLunchIdea,
+  deleteLunchIdea,
+  getLunchIdeas,
+  updateLunchIdea,
+} from '../services/lunchApi'
 import './LunchForm.css'
 
 const CATEGORIES: { value: LunchCategory; label: string }[] = [
@@ -28,9 +33,14 @@ const MAX_PREP_TIME_MINUTES = 240
 export default function LunchForm() {
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [ideas, setIdeas] = useState<SavedLunchIdea[]>([])
+  const [showNutFreeOnly, setShowNutFreeOnly] = useState(false)
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
   const [successMsg, setSuccessMsg] = useState('')
   const [apiError, setApiError] = useState('')
+  const [editingId, setEditingId] = useState<number | null>(null)
+
+  const filteredIdeas = showNutFreeOnly ? ideas.filter((idea) => idea.nutFree) : ideas
+  const isEditing = editingId !== null
 
   useEffect(() => {
     async function loadIdeas() {
@@ -76,6 +86,54 @@ export default function LunchForm() {
     return Object.keys(newErrors).length === 0
   }
 
+  function resetForm() {
+    setForm(EMPTY_FORM)
+    setEditingId(null)
+    setErrors({})
+    setApiError('')
+  }
+
+  function startEditing(idea: SavedLunchIdea) {
+    setEditingId(idea.id)
+    setForm({
+      name: idea.name,
+      category: idea.category,
+      prepTimeMinutes: String(idea.prepTimeMinutes),
+      notes: idea.notes,
+      nutFree: idea.nutFree,
+    })
+    setErrors({})
+    setSuccessMsg('')
+    setApiError('')
+  }
+
+  async function handleDelete(id: number) {
+    const idea = ideas.find((entry) => entry.id === id)
+    if (!idea) {
+      return
+    }
+
+    const confirmed = window.confirm(`Delete "${idea.name}"?`)
+    if (!confirmed) {
+      return
+    }
+
+    setApiError('')
+
+    try {
+      await deleteLunchIdea(id)
+      setIdeas((prev) => prev.filter((entry) => entry.id !== id))
+      if (editingId === id) {
+        resetForm()
+      }
+      setSuccessMsg(`🗑️ "${idea.name}" deleted!`)
+      setTimeout(() => setSuccessMsg(''), 4000)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to delete lunch idea'
+      setApiError(message)
+    }
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!validate()) return
@@ -90,11 +148,17 @@ export default function LunchForm() {
     }
 
     try {
-      const savedIdea = await createLunchIdea(ideaPayload)
-      setIdeas((prev) => [savedIdea, ...prev])
-      setSuccessMsg(`✅ "${savedIdea.name}" added!`)
-      setForm(EMPTY_FORM)
-      setErrors({})
+      if (isEditing && editingId !== null) {
+        const updatedIdea = await updateLunchIdea(editingId, ideaPayload)
+        setIdeas((prev) => prev.map((entry) => (entry.id === editingId ? updatedIdea : entry)))
+        setSuccessMsg(`✅ "${updatedIdea.name}" updated!`)
+      } else {
+        const savedIdea = await createLunchIdea(ideaPayload)
+        setIdeas((prev) => [savedIdea, ...prev])
+        setSuccessMsg(`✅ "${savedIdea.name}" added!`)
+      }
+
+      resetForm()
       setTimeout(() => setSuccessMsg(''), 4000)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to save lunch idea'
@@ -107,8 +171,17 @@ export default function LunchForm() {
       <header className="lf-header">
         <span className="lf-header-emoji">🍱</span>
         <h1 className="lf-title">Kids Lunch Planner</h1>
-        <p className="lf-subtitle">Add lunch ideas for your little ones!</p>
+        <p className="lf-subtitle">Add and manage lunch ideas for your little ones!</p>
       </header>
+
+      {isEditing && (
+        <div className="lf-edit-banner" role="status">
+          <span>Editing “{ideas.find((idea) => idea.id === editingId)?.name ?? 'Lunch Idea'}”</span>
+          <button type="button" className="lf-link-button" onClick={resetForm}>
+            Cancel edit
+          </button>
+        </div>
+      )}
 
       <form className="lf-form" onSubmit={handleSubmit} noValidate>
 
@@ -198,8 +271,14 @@ export default function LunchForm() {
         </div>
 
         <button type="submit" className="lf-submit">
-          Add Lunch Idea 🎒
+          {isEditing ? 'Save Changes ✨' : 'Add Lunch Idea 🎒'}
         </button>
+
+        {isEditing && (
+          <button type="button" className="lf-secondary-button" onClick={resetForm}>
+            Cancel
+          </button>
+        )}
 
         {successMsg && <p className="lf-success" role="status">{successMsg}</p>}
         {apiError && <p className="lf-error" role="alert">{apiError}</p>}
@@ -208,25 +287,56 @@ export default function LunchForm() {
       {/* Saved ideas */}
       {ideas.length > 0 && (
         <section className="lf-entries">
-          <h2 className="lf-entries-title">💡 Lunch Ideas ({ideas.length})</h2>
-          <ul className="lf-entry-list">
-            {ideas.map((idea) => {
-              const cat = CATEGORIES.find((c) => c.value === idea.category)
-              return (
-                <li key={idea.id} className="lf-entry-card">
-                  <div className="lf-entry-header">
-                    <span className="lf-entry-name">{idea.name}</span>
-                    <span className={`lf-badge lf-badge--${idea.category}`}>{cat?.label}</span>
-                  </div>
-                  <div className="lf-entry-body">
-                    <span className="lf-entry-meta">⏱️ {idea.prepTimeMinutes} min</span>
-                    {idea.nutFree && <span className="lf-entry-tag">🥜 Nut Free</span>}
-                    {idea.notes && <em className="lf-entry-notes">"{idea.notes}"</em>}
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
+          <div className="lf-entries-header">
+            <h2 className="lf-entries-title">💡 Lunch Ideas ({filteredIdeas.length})</h2>
+            <label className="lf-toggle">
+              <input
+                type="checkbox"
+                checked={showNutFreeOnly}
+                onChange={(e) => setShowNutFreeOnly(e.target.checked)}
+                className="lf-toggle__input"
+              />
+              <span className="lf-toggle__track" aria-hidden="true" />
+              <span className="lf-toggle__label">Show nut free only</span>
+            </label>
+          </div>
+
+          {filteredIdeas.length === 0 ? (
+            <p className="lf-empty-state" role="status">
+              No lunches match the current filter.
+            </p>
+          ) : (
+            <ul className="lf-entry-list">
+              {filteredIdeas.map((idea) => {
+                const cat = CATEGORIES.find((c) => c.value === idea.category)
+                return (
+                  <li key={idea.id} className="lf-entry-card">
+                    <div className="lf-entry-header">
+                      <span className="lf-entry-name">{idea.name}</span>
+                      <span className={`lf-badge lf-badge--${idea.category}`}>{cat?.label}</span>
+                    </div>
+                    <div className="lf-entry-body">
+                      <span className="lf-entry-meta">⏱️ {idea.prepTimeMinutes} min</span>
+                      {idea.nutFree && <span className="lf-entry-tag">🥜 Nut Free</span>}
+                      {idea.notes && <em className="lf-entry-notes">"{idea.notes}"</em>}
+                    </div>
+                    <div className="lf-entry-actions">
+                      <button type="button" className="lf-action-button" onClick={() => startEditing(idea)}>
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        className="lf-action-button lf-action-button--danger"
+                        onClick={() => handleDelete(idea.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
         </section>
       )}
     </div>

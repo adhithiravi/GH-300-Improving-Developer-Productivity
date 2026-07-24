@@ -19,6 +19,8 @@ type CreateLunchIdeaInput = {
   prepTimeMinutes?: unknown
 }
 
+type UpdateLunchIdeaInput = CreateLunchIdeaInput
+
 type ValidationErrors = Partial<Record<keyof Omit<LunchIdea, 'id'>, string>>
 
 const VALID_CATEGORIES: LunchCategory[] = ['main', 'snack', 'fruit', 'drink', 'treat']
@@ -103,6 +105,20 @@ function validateLunchInput(input: CreateLunchIdeaInput): {
 
 const lunchesRouter = Router()
 
+function parseLunchId(value: string | string[]): number | null {
+  if (Array.isArray(value)) {
+    return null
+  }
+
+  const id = Number(value)
+
+  if (!Number.isInteger(id) || id <= 0) {
+    return null
+  }
+
+  return id
+}
+
 lunchesRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({ data: lunchIdeas })
 })
@@ -126,6 +142,70 @@ lunchesRouter.post('/', (req: Request, res: Response) => {
   lunchIdeas.unshift(newLunch)
 
   return res.status(201).json({ data: newLunch })
+})
+
+lunchesRouter.delete('/:id', (req: Request, res: Response) => {
+  const id = parseLunchId(req.params.id)
+
+  if (id === null) {
+    return res.status(400).json({
+      error: 'Invalid request params',
+      details: {
+        id: 'id must be a positive integer',
+      },
+    })
+  }
+
+  const lunchIndex = lunchIdeas.findIndex((lunch) => lunch.id === id)
+
+  if (lunchIndex === -1) {
+    return res.status(404).json({
+      error: 'Lunch idea not found',
+    })
+  }
+
+  const [deletedLunch] = lunchIdeas.splice(lunchIndex, 1)
+
+  return res.status(200).json({ data: deletedLunch })
+})
+
+lunchesRouter.put('/:id', (req: Request, res: Response) => {
+  const id = parseLunchId(req.params.id)
+
+  if (id === null) {
+    return res.status(400).json({
+      error: 'Invalid request params',
+      details: {
+        id: 'id must be a positive integer',
+      },
+    })
+  }
+
+  const lunchIndex = lunchIdeas.findIndex((lunch) => lunch.id === id)
+
+  if (lunchIndex === -1) {
+    return res.status(404).json({
+      error: 'Lunch idea not found',
+    })
+  }
+
+  const validation = validateLunchInput(req.body as UpdateLunchIdeaInput)
+
+  if (!validation.value) {
+    return res.status(400).json({
+      error: 'Invalid request body',
+      details: validation.errors,
+    })
+  }
+
+  const updatedLunch: LunchIdea = {
+    id,
+    ...validation.value,
+  }
+
+  lunchIdeas[lunchIndex] = updatedLunch
+
+  return res.status(200).json({ data: updatedLunch })
 })
 
 export default lunchesRouter

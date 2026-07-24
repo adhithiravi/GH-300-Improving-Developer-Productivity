@@ -50,3 +50,36 @@ export async function createLunchIdea(
   const payload = (await response.json()) as { data: SavedLunchIdea }
   return payload.data
 }
+
+export async function updateLunchIdea(
+  id: number,
+  input: CreateLunchIdeaInput,
+): Promise<SavedLunchIdea> {
+  const response = await fetch(`${API_BASE_URL}/api/lunches/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(input),
+  })
+
+  if (!response.ok) {
+    throw new Error(await parseErrorResponse(response))
+  }
+
+  const payload = (await response.json()) as { data: SavedLunchIdea }
+  return payload.data
+}
+
+export async function deleteLunchIdea(id: number): Promise<SavedLunchIdea> {
+  const response = await fetch(`${API_BASE_URL}/api/lunches/${id}`, {
+    method: 'DELETE',
+  })
+
+  if (!response.ok) {
+    throw new Error(await parseErrorResponse(response))
+  }
+
+  const payload = (await response.json()) as { data: SavedLunchIdea }
+  return payload.data
+}
