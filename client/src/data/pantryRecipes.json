@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "name": "PB&J Sandwich",
+    "ingredients": [
+      "Bread",
+      "Peanut Butter",
+      "Strawberry Jam"
+    ],
+    "notes": "Classic favorite - cut into fun shapes with a cookie cutter."
+  },
+  {
+    "id": 2,
+    "name": "Turkey & Cheese Roll-Up",
+    "ingredients": [
+      "Tortillas",
+      "Turkey Slices",
+      "String Cheese"
+    ],
+    "notes": "Roll tightly and slice into bite-sized pinwheels."
+  },
+  {
+    "id": 3,
+    "name": "Apple & Yogurt Snack Box",
+    "ingredients": [
+      "Apples",
+      "Yogurt Cups",
+      "Granola"
+    ],
+    "notes": "Slice apples thin and pack the yogurt with a small spoon."
+  },
+  {
+    "id": 4,
+    "name": "Veggie & Hummus Dippers",
+    "ingredients": [
+      "Carrots",
+      "Hummus",
+      "Crackers"
+    ],
+    "notes": "Great finger food - pack the dip in a separate small container."
+  },
+  {
+    "id": 5,
+    "name": "Banana Milk Smoothie",
+    "ingredients": [
+      "Bananas",
+      "Milk",
+      "Granola"
+    ],
+    "notes": "Blend until smooth and top with a sprinkle of granola."
+  }
+]

@@ -1,11 +1,12 @@
 import { useEffect, useState, FormEvent } from 'react'
-import { LunchIdea, LunchCategory, SavedLunchIdea } from '../types'
+import { LunchIdea, LunchCategory, RecipeIdea, SavedLunchIdea } from '../types'
 import {
   createLunchIdea,
   deleteLunchIdea,
   getLunchIdeas,
   updateLunchIdea,
 } from '../services/lunchApi'
+import { getRecipeIdeas } from '../services/pantryApi'
 import './LunchForm.css'
 
 const CATEGORIES: { value: LunchCategory; label: string }[] = [
@@ -38,6 +39,8 @@ export default function LunchForm() {
   const [successMsg, setSuccessMsg] = useState('')
   const [apiError, setApiError] = useState('')
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [recipeIdeas, setRecipeIdeas] = useState<RecipeIdea[]>([])
+  const [recipeIdeasError, setRecipeIdeasError] = useState('')
 
   const filteredIdeas = showNutFreeOnly ? ideas.filter((idea) => idea.nutFree) : ideas
   const isEditing = editingId !== null
@@ -54,6 +57,20 @@ export default function LunchForm() {
     }
 
     void loadIdeas()
+  }, [])
+
+  useEffect(() => {
+    async function loadRecipeIdeas() {
+      try {
+        const ideasFromPantry = await getRecipeIdeas()
+        setRecipeIdeas(ideasFromPantry)
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to load recipe ideas'
+        setRecipeIdeasError(message)
+      }
+    }
+
+    void loadRecipeIdeas()
   }, [])
 
   function validate(): boolean {
@@ -83,6 +100,19 @@ export default function LunchForm() {
     }
 
     setErrors(newErrors)
+
+    const fieldIds: Record<'name' | 'prepTimeMinutes' | 'notes', string> = {
+      name: 'name',
+      prepTimeMinutes: 'prepTime',
+      notes: 'notes',
+    }
+    const firstInvalidField = (['name', 'prepTimeMinutes', 'notes'] as const).find(
+      (field) => newErrors[field],
+    )
+    if (firstInvalidField) {
+      document.getElementById(fieldIds[firstInvalidField])?.focus()
+    }
+
     return Object.keys(newErrors).length === 0
   }
 
@@ -134,6 +164,28 @@ export default function LunchForm() {
     }
   }
 
+  async function handleQuickAdd(recipe: RecipeIdea) {
+    setApiError('')
+
+    const ideaPayload: LunchIdea = {
+      name: recipe.name,
+      category: recipe.category,
+      prepTimeMinutes: recipe.prepTimeMinutes,
+      notes: recipe.notes,
+      nutFree: recipe.nutFree,
+    }
+
+    try {
+      const savedIdea = await createLunchIdea(ideaPayload)
+      setIdeas((prev) => [savedIdea, ...prev])
+      setSuccessMsg(`✅ "${savedIdea.name}" added from pantry!`)
+      setTimeout(() => setSuccessMsg(''), 4000)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to add lunch idea'
+      setApiError(message)
+    }
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!validate()) return
@@ -174,6 +226,37 @@ export default function LunchForm() {
         <p className="lf-subtitle">Add and manage lunch ideas for your little ones!</p>
       </header>
 
+      <section className="lf-recipe-ideas">
+        <h2 className="lf-recipe-ideas-title">🥫 Recipe Ideas from Your Pantry</h2>
+        {recipeIdeasError && <p className="lf-error" role="alert">{recipeIdeasError}</p>}
+        {!recipeIdeasError && recipeIdeas.length === 0 && (
+          <p className="lf-empty-state" role="status">
+            No recipe ideas available right now — check the Pantry page for low stock items.
+          </p>
+        )}
+        {recipeIdeas.length > 0 && (
+          <ul className="lf-recipe-idea-list">
+            {recipeIdeas.map((recipe) => (
+              <li key={recipe.id} className="lf-recipe-idea-card">
+                <div className="lf-recipe-idea-header">
+                  <span className="lf-recipe-idea-name">{recipe.name}</span>
+                  {recipe.nutFree && <span className="lf-entry-tag">🥜 Nut Free</span>}
+                </div>
+                <span className="lf-entry-meta">⏱️ {recipe.prepTimeMinutes} min · {recipe.ingredients.join(', ')}</span>
+                <button
+                  type="button"
+                  className="lf-action-button"
+                  onClick={() => handleQuickAdd(recipe)}
+                  aria-label={`Quick add ${recipe.name} to lunch ideas`}
+                >
+                  ⚡ Quick Add
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       {isEditing && (
         <div className="lf-edit-banner" role="status">
           <span>Editing “{ideas.find((idea) => idea.id === editingId)?.name ?? 'Lunch Idea'}”</span>
@@ -196,8 +279,15 @@ export default function LunchForm() {
             placeholder="e.g. PB&J Sandwich"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
+            required
+            aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? 'name-error' : undefined}
           />
-          {errors.name && <span className="lf-error">{errors.name}</span>}
+          {errors.name && (
+            <span id="name-error" className="lf-error" role="alert">
+              {errors.name}
+            </span>
+          )}
         </div>
 
         {/* Category */}
@@ -235,8 +325,15 @@ export default function LunchForm() {
             placeholder="e.g. 10"
             value={form.prepTimeMinutes}
             onChange={(e) => setForm({ ...form, prepTimeMinutes: e.target.value })}
+            required
+            aria-invalid={!!errors.prepTimeMinutes}
+            aria-describedby={errors.prepTimeMinutes ? 'prepTime-error' : undefined}
           />
-          {errors.prepTimeMinutes && <span className="lf-error">{errors.prepTimeMinutes}</span>}
+          {errors.prepTimeMinutes && (
+            <span id="prepTime-error" className="lf-error" role="alert">
+              {errors.prepTimeMinutes}
+            </span>
+          )}
         </div>
 
         {/* Nut Free */}
@@ -266,8 +363,15 @@ export default function LunchForm() {
             rows={3}
             value={form.notes ?? ''}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
+            required
+            aria-invalid={!!errors.notes}
+            aria-describedby={errors.notes ? 'notes-error' : undefined}
           />
-          {errors.notes && <span className="lf-error">{errors.notes}</span>}
+          {errors.notes && (
+            <span id="notes-error" className="lf-error" role="alert">
+              {errors.notes}
+            </span>
+          )}
         </div>
 
         <button type="submit" className="lf-submit">
@@ -321,13 +425,19 @@ export default function LunchForm() {
                       {idea.notes && <em className="lf-entry-notes">"{idea.notes}"</em>}
                     </div>
                     <div className="lf-entry-actions">
-                      <button type="button" className="lf-action-button" onClick={() => startEditing(idea)}>
+                      <button
+                        type="button"
+                        className="lf-action-button"
+                        onClick={() => startEditing(idea)}
+                        aria-label={`Edit ${idea.name}`}
+                      >
                         Edit
                       </button>
                       <button
                         type="button"
                         className="lf-action-button lf-action-button--danger"
                         onClick={() => handleDelete(idea.id)}
+                        aria-label={`Delete ${idea.name}`}
                       >
                         Delete
                       </button>

@@ -49,6 +49,53 @@
   font-weight: 600;
 }
 
+/* ── Recipe ideas from pantry ────────────────────────────────────── */
+.lf-recipe-ideas {
+  margin-bottom: 32px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.lf-recipe-ideas-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 16px;
+}
+
+.lf-recipe-idea-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lf-recipe-idea-card {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  background: var(--social-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lf-recipe-idea-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.lf-recipe-idea-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text-h);
+}
+
 .lf-link-button,
 .lf-secondary-button,
 .lf-action-button {
@@ -202,6 +249,11 @@
   border-color: var(--accent);
   background: var(--accent-bg);
   color: var(--accent);
+}
+
+.lf-card:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* ── Visually hidden (for accessible radio/checkbox) ─────────────── */
