@@ -1,0 +1,606 @@
+/* ── Page layout ─────────────────────────────────────────────────── */
+.lf-page {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+  box-sizing: border-box;
+}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+.lf-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.lf-header-emoji {
+  font-size: 56px;
+  line-height: 1;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.lf-title {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin: 0 0 8px;
+  color: var(--text-h);
+}
+
+.lf-subtitle {
+  font-size: 16px;
+  color: var(--text);
+  margin: 0;
+}
+
+.lf-edit-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--accent);
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ── Recipe ideas from pantry ────────────────────────────────────── */
+.lf-recipe-ideas {
+  margin-bottom: 32px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.lf-recipe-ideas-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 16px;
+}
+
+.lf-recipe-idea-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lf-recipe-idea-card {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  background: var(--social-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lf-recipe-idea-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.lf-recipe-idea-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text-h);
+}
+
+.lf-link-button,
+.lf-secondary-button,
+.lf-action-button {
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  font-family: var(--sans);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.lf-link-button {
+  padding: 8px 12px;
+  border-color: var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.lf-link-button:hover,
+.lf-secondary-button:hover,
+.lf-action-button:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+.lf-secondary-button {
+  padding: 12px 20px;
+  border-color: var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  min-width: 220px;
+  align-self: center;
+}
+
+/* ── Form ────────────────────────────────────────────────────────── */
+.lf-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Field / fieldset ────────────────────────────────────────────── */
+.lf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lf-field--inline {
+  flex-direction: row;
+  align-items: center;
+}
+
+.lf-fieldset {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 0;
+}
+
+.lf-fieldset--error {
+  border-color: #ef4444;
+}
+
+.lf-legend {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-h);
+  padding: 0 6px;
+}
+
+.lf-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.lf-optional {
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--text);
+}
+
+/* ── Text inputs ─────────────────────────────────────────────────── */
+.lf-input,
+.lf-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 16px;
+  font-family: var(--sans);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.lf-input:focus,
+.lf-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.lf-input--error {
+  border-color: #ef4444;
+}
+
+.lf-input--short {
+  max-width: 160px;
+}
+
+.lf-textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* ── Card grid (radio / checkbox options) ────────────────────────── */
+.lf-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.lf-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--social-bg);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-h);
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  line-height: 1.3;
+}
+
+.lf-card:hover {
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow);
+}
+
+.lf-card--selected {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.lf-card:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Visually hidden (for accessible radio/checkbox) ─────────────── */
+.lf-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Toggle switch (nut free) ────────────────────────────────────── */
+.lf-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.lf-toggle__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.lf-toggle__track {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--border);
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.lf-toggle__track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.lf-toggle__input:checked+.lf-toggle__track {
+  background: var(--accent);
+}
+
+.lf-toggle__input:checked+.lf-toggle__track::after {
+  transform: translateX(20px);
+}
+
+.lf-toggle__input:focus-visible+.lf-toggle__track {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.lf-toggle__label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+/* ── Submit button ───────────────────────────────────────────────── */
+.lf-submit {
+  padding: 14px 28px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: opacity 0.2s, box-shadow 0.2s;
+  align-self: center;
+  min-width: 220px;
+}
+
+.lf-submit:hover {
+  opacity: 0.88;
+  box-shadow: var(--shadow);
+}
+
+.lf-submit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ── Inline messages ─────────────────────────────────────────────── */
+.lf-error {
+  font-size: 13px;
+  color: #ef4444;
+  margin-top: 2px;
+}
+
+.lf-success {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: #16a34a;
+  margin: 0;
+}
+
+/* ── Saved ideas list ────────────────────────────────────────────── */
+.lf-entries {
+  margin-top: 48px;
+  border-top: 1px solid var(--border);
+  padding-top: 32px;
+}
+
+.lf-entries-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.lf-entries-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.lf-empty-state {
+  margin: 0;
+  padding: 20px;
+  border: 1.5px dashed var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  text-align: center;
+}
+
+.lf-entry-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lf-entry-card {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  background: var(--social-bg);
+}
+
+.lf-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.lf-entry-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text-h);
+}
+
+.lf-entry-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.lf-entry-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.lf-action-button {
+  padding: 8px 12px;
+  border-color: var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 13px;
+}
+
+.lf-action-button--danger {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+}
+
+.lf-entry-meta {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.lf-entry-tag {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+@media (prefers-color-scheme: dark) {
+  .lf-entry-tag {
+    background: rgba(254, 249, 195, 0.15);
+    color: #fde047;
+  }
+}
+
+.lf-entry-notes {
+  font-size: 13px;
+  color: var(--text);
+  width: 100%;
+}
+
+/* ── Category badge ──────────────────────────────────────────────── */
+.lf-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.lf-badge--main {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.lf-badge--snack {
+  background: #fce7f3;
+  color: #9d174d;
+}
+
+.lf-badge--fruit {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.lf-badge--drink {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.lf-badge--treat {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+@media (max-width: 640px) {
+  .lf-edit-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lf-entries-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lf-entries-header .lf-toggle {
+    justify-content: center;
+  }
+}
+
+.lf-badge--drink {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.lf-badge--treat {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+@media (prefers-color-scheme: dark) {
+  .lf-badge--main {
+    background: rgba(109, 40, 217, 0.2);
+    color: #c4b5fd;
+  }
+
+  .lf-badge--snack {
+    background: rgba(157, 23, 77, 0.2);
+    color: #f9a8d4;
+  }
+
+  .lf-badge--fruit {
+    background: rgba(22, 101, 52, 0.2);
+    color: #86efac;
+  }
+
+  .lf-badge--drink {
+    background: rgba(30, 64, 175, 0.2);
+    color: #93c5fd;
+  }
+
+  .lf-badge--treat {
+    background: rgba(154, 52, 18, 0.2);
+    color: #fdba74;
+  }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .lf-page {
+    padding: 24px 16px 48px;
+  }
+
+  .lf-title {
+    font-size: 28px;
+  }
+
+  .lf-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lf-submit {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .lf-secondary-button {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .lf-entry-actions {
+    flex-direction: column;
+  }
+
+  .lf-action-button {
+    width: 100%;
+  }
+}

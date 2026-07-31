@@ -1,0 +1,100 @@
+[
+  {
+    "id": 1,
+    "name": "Bread",
+    "category": "grain",
+    "quantity": "1 loaf",
+    "lowStock": false
+  },
+  {
+    "id": 2,
+    "name": "Peanut Butter",
+    "category": "condiment",
+    "quantity": "1 jar",
+    "lowStock": false
+  },
+  {
+    "id": 3,
+    "name": "Strawberry Jam",
+    "category": "condiment",
+    "quantity": "1 jar",
+    "lowStock": false
+  },
+  {
+    "id": 4,
+    "name": "Apples",
+    "category": "produce",
+    "quantity": "6 count",
+    "lowStock": false
+  },
+  {
+    "id": 5,
+    "name": "Bananas",
+    "category": "produce",
+    "quantity": "5 count",
+    "lowStock": true
+  },
+  {
+    "id": 6,
+    "name": "Carrots",
+    "category": "produce",
+    "quantity": "1 bag",
+    "lowStock": false
+  },
+  {
+    "id": 7,
+    "name": "String Cheese",
+    "category": "dairy",
+    "quantity": "8 pack",
+    "lowStock": false
+  },
+  {
+    "id": 8,
+    "name": "Yogurt Cups",
+    "category": "dairy",
+    "quantity": "6 pack",
+    "lowStock": false
+  },
+  {
+    "id": 9,
+    "name": "Turkey Slices",
+    "category": "protein",
+    "quantity": "1 pack",
+    "lowStock": false
+  },
+  {
+    "id": 10,
+    "name": "Crackers",
+    "category": "grain",
+    "quantity": "1 box",
+    "lowStock": true
+  },
+  {
+    "id": 11,
+    "name": "Tortillas",
+    "category": "grain",
+    "quantity": "1 pack",
+    "lowStock": false
+  },
+  {
+    "id": 12,
+    "name": "Hummus",
+    "category": "condiment",
+    "quantity": "1 tub",
+    "lowStock": false
+  },
+  {
+    "id": 13,
+    "name": "Milk",
+    "category": "dairy",
+    "quantity": "1/2 gallon",
+    "lowStock": false
+  },
+  {
+    "id": 14,
+    "name": "Granola",
+    "category": "grain",
+    "quantity": "1 bag",
+    "lowStock": false
+  }
+]
