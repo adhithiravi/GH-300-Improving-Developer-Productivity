@@ -137,6 +137,21 @@ export default function LunchForm() {
     setApiError('')
   }
 
+  function duplicateIdea(idea: SavedLunchIdea) {
+    setEditingId(null)
+    setForm({
+      name: `${idea.name} (Copy)`,
+      category: idea.category,
+      prepTimeMinutes: String(idea.prepTimeMinutes),
+      notes: idea.notes,
+      nutFree: idea.nutFree,
+    })
+    setErrors({})
+    setSuccessMsg('')
+    setApiError('')
+    document.getElementById('name')?.focus()
+  }
+
   async function handleDelete(id: number) {
     const idea = ideas.find((entry) => entry.id === id)
     if (!idea) {
@@ -432,6 +447,14 @@ export default function LunchForm() {
                         aria-label={`Edit ${idea.name}`}
                       >
                         Edit
+                      </button>
+                      <button
+                        type="button"
+                        className="lf-action-button"
+                        onClick={() => duplicateIdea(idea)}
+                        aria-label={`Duplicate ${idea.name}`}
+                      >
+                        Duplicate
                       </button>
                       <button
                         type="button"

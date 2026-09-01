@@ -70,3 +70,30 @@ Once the server is running, verify it's up with:
 ```bash
 curl http://localhost:5050/api/health
 ```
+
+## Client Lunch API Service
+
+The client uses `client/src/services/lunchApi.ts` to call lunch endpoints.
+
+- `getLunchIdeas()` calls `GET /api/lunches` and returns an array of saved ideas.
+- `createLunchIdea(input)` calls `POST /api/lunches` with a JSON body and returns the created idea.
+- `updateLunchIdea(id, input)` calls `PUT /api/lunches/:id` with a JSON body and returns the updated idea.
+- `deleteLunchIdea(id)` calls `DELETE /api/lunches/:id` and returns the deleted idea from the response.
+
+All functions return the response `data` field and propagate errors thrown by the shared `apiRequest` helper.
+
+Example: create a lunch idea
+
+```ts
+import { createLunchIdea } from './services/lunchApi'
+
+const created = await createLunchIdea({
+  name: 'Turkey Wrap',
+  category: 'main',
+  prepTimeMinutes: 10,
+  notes: 'Add sliced cucumber on the side.',
+  nutFree: true,
+})
+
+console.log(created.id)
+```
