@@ -36,7 +36,7 @@ function isLunchCategory(value: unknown): value is LunchCategory {
   return typeof value === 'string' && VALID_CATEGORIES.includes(value as LunchCategory)
 }
 
-function validateLunchInput(input: CreateLunchIdeaInput): {
+export function validateLunchInput(input: CreateLunchIdeaInput): {
   errors: ValidationErrors
   value?: Omit<LunchIdea, 'id'>
 } {
