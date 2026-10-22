@@ -186,6 +186,48 @@ function toRecipeIdea(recipe: PantryRecipe): RecipeIdea {
   return { ...recipe, nutFree: isRecipeNutFree(recipe) }
 }
 
+function buildPantryItemByNameLookup(items: PantryItem[]): Map<string, PantryItem> {
+  const itemsByName = new Map<string, PantryItem>()
+
+  for (const item of items) {
+    // Match Array.find behavior by keeping the first item for each name.
+    if (!itemsByName.has(item.name)) {
+      itemsByName.set(item.name, item)
+    }
+  }
+
+  return itemsByName
+}
+
+function evaluateRecipeWithLookup(
+  recipe: PantryRecipe,
+  pantryItemsByName: Map<string, PantryItem>,
+): { available: boolean; nutFree: boolean } {
+  let available = true
+  let nutFree = true
+
+  for (const ingredientName of recipe.ingredients) {
+    const item = pantryItemsByName.get(ingredientName)
+
+    if (item === undefined) {
+      available = false
+      nutFree = false
+      break
+    }
+
+    if (item.lowStock) {
+      available = false
+      break
+    }
+
+    if (!item.nutFree) {
+      nutFree = false
+    }
+  }
+
+  return { available, nutFree }
+}
+
 const pantryRouter = Router()
 
 let nextPantryItemId = pantryItems.reduce((maxId, item) => Math.max(maxId, item.id), 0) + 1
@@ -280,7 +322,17 @@ pantryRouter.get('/recipes', (_req: Request, res: Response) => {
 })
 
 pantryRouter.get('/recipe-ideas', (_req: Request, res: Response) => {
-  const ideas = pantryRecipes.filter(isRecipeAvailable).map(toRecipeIdea)
+  const pantryItemsByName = buildPantryItemByNameLookup(pantryItems)
+  const ideas: RecipeIdea[] = []
+
+  for (const recipe of pantryRecipes) {
+    const evaluation = evaluateRecipeWithLookup(recipe, pantryItemsByName)
+
+    if (evaluation.available) {
+      ideas.push({ ...recipe, nutFree: evaluation.nutFree })
+    }
+  }
+
   res.status(200).json({ data: ideas })
 })
 

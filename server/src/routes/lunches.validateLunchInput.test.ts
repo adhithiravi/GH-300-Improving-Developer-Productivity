@@ -22,12 +22,24 @@ function makeValidInput(overrides: TestInput = {}): TestInput {
 
 describe('validateLunchInput', () => {
   describe('input object runtime type', () => {
-    it('throws when input is undefined', () => {
-      expect(() => validateLunchInput(undefined as unknown as TestInput)).toThrow(TypeError)
+    it('returns validation errors when input is undefined', () => {
+      expect(validateLunchInput(undefined).errors).toEqual({
+        name: 'name is required',
+        category: 'category must be one of: main, snack, fruit, drink, treat',
+        notes: 'notes is required',
+        nutFree: 'nutFree must be a boolean',
+        prepTimeMinutes: 'prepTimeMinutes must be a whole number greater than 0',
+      })
     })
 
-    it('throws when input is null', () => {
-      expect(() => validateLunchInput(null as unknown as TestInput)).toThrow(TypeError)
+    it('returns validation errors when input is null', () => {
+      expect(validateLunchInput(null).errors).toEqual({
+        name: 'name is required',
+        category: 'category must be one of: main, snack, fruit, drink, treat',
+        notes: 'notes is required',
+        nutFree: 'nutFree must be a boolean',
+        prepTimeMinutes: 'prepTimeMinutes must be a whole number greater than 0',
+      })
     })
   })
 

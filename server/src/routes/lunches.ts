@@ -36,10 +36,26 @@ function isLunchCategory(value: unknown): value is LunchCategory {
   return typeof value === 'string' && VALID_CATEGORIES.includes(value as LunchCategory)
 }
 
-export function validateLunchInput(input: CreateLunchIdeaInput): {
+function isCreateLunchIdeaInput(value: unknown): value is CreateLunchIdeaInput {
+  return typeof value === 'object' && value !== null
+}
+
+export function validateLunchInput(input: unknown): {
   errors: ValidationErrors
   value?: Omit<LunchIdea, 'id'>
 } {
+  if (!isCreateLunchIdeaInput(input)) {
+    return {
+      errors: {
+        name: 'name is required',
+        category: `category must be one of: ${VALID_CATEGORIES.join(', ')}`,
+        notes: 'notes is required',
+        nutFree: 'nutFree must be a boolean',
+        prepTimeMinutes: 'prepTimeMinutes must be a whole number greater than 0',
+      },
+    }
+  }
+
   const errors: ValidationErrors = {}
   let category: LunchCategory | undefined
   let nutFree: boolean | undefined
@@ -124,7 +140,7 @@ lunchesRouter.get('/', (_req: Request, res: Response) => {
 })
 
 lunchesRouter.post('/', (req: Request, res: Response) => {
-  const validation = validateLunchInput(req.body as CreateLunchIdeaInput)
+  const validation = validateLunchInput(req.body)
 
   if (!validation.value) {
     return res.status(400).json({
@@ -189,7 +205,7 @@ lunchesRouter.put('/:id', (req: Request, res: Response) => {
     })
   }
 
-  const validation = validateLunchInput(req.body as UpdateLunchIdeaInput)
+  const validation = validateLunchInput(req.body)
 
   if (!validation.value) {
     return res.status(400).json({
